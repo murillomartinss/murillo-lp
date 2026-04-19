@@ -9,140 +9,10 @@ import {
   type Variants,
 } from "framer-motion";
 import styles from "./App.module.css";
-
-type NavItem = {
-  label: string;
-  href: string;
-  active?: boolean;
-};
-
-type ServiceCard = {
-  title: string;
-  description: string;
-  icon: string;
-  wide?: boolean;
-};
-
-type TimelineItem = {
-  period: string;
-  title: string;
-  company: string;
-  description: string;
-  tags: string[];
-  badge?: string;
-  current?: boolean;
-};
-
-type SkillCard = {
-  title: string;
-  description: string;
-  icon: string;
-  offset: "low" | "high" | "mid" | "base";
-  emphasis?: boolean;
-};
+import { landingContent } from "./config/landingContent";
 
 type FrameNavProps = {
   onNavigate: (hash: string) => void;
-};
-
-const navItems: NavItem[] = [
-  { label: "Work", href: "#work" },
-  { label: "Services", href: "#services", active: true },
-  { label: "Experience", href: "#experience" },
-  { label: "Skills", href: "#skills" },
-  { label: "Contact", href: "#contact" },
-];
-
-const serviceCards: ServiceCard[] = [
-  {
-    title: "Design System Development",
-    description:
-      "Architecting comprehensive component libraries that bridge design and engineering, ensuring consistent UI across scale.",
-    icon: "A",
-  },
-  {
-    title: "Frontend Architecture",
-    description:
-      "Structuring resilient, highly scalable frontend ecosystems. Focus on state management, routing paradigms, and modular monolith separation.",
-    icon: "M",
-    wide: true,
-  },
-  {
-    title: "Performance Optimization",
-    description:
-      "Ruthless minimization of bundle sizes, critical rendering path optimization, and memory leak mitigation for fluid experiences.",
-    icon: "C",
-  },
-  {
-    title: "Accessibility (A11y)",
-    description:
-      "Deep expertise in WCAG compliance, semantic HTML, and ARIA roles. Ensuring digital inclusion is not an afterthought.",
-    icon: "T",
-  },
-  {
-    title: "UI Engineering",
-    description:
-      "Crafting pixel-perfect, highly interactive interfaces that translate high-fidelity designs into robust code.",
-    icon: "G",
-  },
-];
-
-const timelineItems: TimelineItem[] = [
-  {
-    period: "2021 - PRESENT",
-    title: "Lead UI Architect",
-    company: "Nexus Systems Group",
-    description:
-      "Spearheaded the consolidation of divergent UI paradigms into a unified, framework-agnostic design system. Engineered a robust core library serving both React and Angular ecosystems, significantly reducing feature time-to-market. Established Storybook as the ultimate source of truth for design tokens, component APIs, and interactive documentation.",
-    tags: ["React & Angular", "Storybook", "Design Tokens", "Tailwind CSS"],
-    badge: "DESIGN SYSTEMS FOCUS",
-    current: true,
-  },
-  {
-    period: "2018 - 2021",
-    title: "Senior Front-End Engineer",
-    company: "Aether Technologies",
-    description:
-      "Architected scalable front-end solutions for enterprise dashboards. Implemented rigorous automated testing methodologies, ensuring zero-regression deploys. Built and maintained complex CI/CD pipelines bridging the gap between front-end infrastructure and cloud deployments.",
-    tags: ["Jest & Cypress", "CI/CD Pipelines", "TypeScript Core", "Component Architecture"],
-  },
-];
-
-const skillCards: SkillCard[] = [
-  {
-    title: "React",
-    description:
-      "Component-driven architecture, advanced hooks ecosystem, and deeply optimized state management flows.",
-    icon: "</>",
-    offset: "low",
-  },
-  {
-    title: "Angular",
-    description:
-      "Enterprise-scale applications leveraging RxJS reactive paradigms and strict dependency injection.",
-    icon: "[]",
-    offset: "high",
-    emphasis: true,
-  },
-  {
-    title: "TypeScript",
-    description:
-      "Static typing orchestration, interface contracts, ensuring robust end-to-end type safety.",
-    icon: "{}",
-    offset: "mid",
-  },
-  {
-    title: "Storybook",
-    description:
-      "Isolated component laboratories, comprehensive design system documentation, and visual regression testing.",
-    icon: "SB",
-    offset: "base",
-  },
-];
-
-const socialLinks = ["LinkedIn", "GitHub"];
-const sectionIdAliases: Record<string, string> = {
-  work: "services",
 };
 
 const sectionStagger: Variants = {
@@ -202,10 +72,10 @@ function FrameNav({ onNavigate }: FrameNavProps) {
             onNavigate("#hero");
           }}
         >
-          ARCHITECT.UX
+          {landingContent.nav.brand}
         </a>
         <nav className={styles.navLinks} aria-label="Primary">
-          {navItems.map((item) => (
+          {landingContent.nav.items.map((item) => (
             <a
               key={item.label}
               className={item.active ? styles.navLinkActive : styles.navLink}
@@ -227,7 +97,7 @@ function FrameNav({ onNavigate }: FrameNavProps) {
             onNavigate("#contact");
           }}
         >
-          Resume
+          {landingContent.nav.resumeLabel}
         </a>
       </div>
     </header>
@@ -244,7 +114,7 @@ export default function App() {
 
   const scrollToHash = (hash: string, behavior: ScrollBehavior = reduceMotion ? "auto" : "smooth") => {
     const normalizedHash = hash.startsWith("#") ? hash.slice(1) : hash;
-    const targetId = sectionIdAliases[normalizedHash] ?? normalizedHash;
+    const targetId = landingContent.aliases[normalizedHash] ?? normalizedHash;
     const target = document.getElementById(targetId);
 
     if (!target) {
@@ -345,28 +215,27 @@ export default function App() {
                 variants={sectionStagger}
               >
                 <motion.h1 className={styles.heroTitle} variants={cardReveal}>
-                  Architecting
+                  {landingContent.hero.title.lineOne}
                   <br />
-                  The Digital
+                  {landingContent.hero.title.lineTwo}
                   <br />
-                  <span>Frontier</span>
+                  <span>{landingContent.hero.title.highlight}</span>
                 </motion.h1>
                 <motion.p className={styles.heroText} variants={cardReveal}>
-                  Frontend Architect &amp; Design System Specialist. Forging scalable,
-                  accessible, and high-performance digital experiences.
+                  {landingContent.hero.description}
                 </motion.p>
                 <motion.a
                   className={styles.primaryCta}
-                  href="#work"
+                  href={landingContent.hero.cta.href}
                   onClick={(event) => {
                     event.preventDefault();
-                    scrollToHash("#work");
+                    scrollToHash(landingContent.hero.cta.href);
                   }}
                   variants={cardReveal}
                   whileHover={reduceMotion ? undefined : { y: -5, scale: 1.04, boxShadow: "0 0 60px rgba(45, 212, 191, 0.4)" }}
                   whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 >
-                  Experience My Work
+                  {landingContent.hero.cta.label}
                   <span aria-hidden="true">+</span>
                 </motion.a>
               </motion.div>
@@ -376,7 +245,7 @@ export default function App() {
                 animate={reduceMotion ? undefined : { y: [0, 16, 0], opacity: [0.35, 0.75, 0.35] }}
                 transition={reduceMotion ? undefined : { duration: 2.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
               >
-                <span>Scroll</span>
+                <span>{landingContent.hero.scrollHint}</span>
                 <div />
               </motion.div>
             </div>
@@ -392,9 +261,9 @@ export default function App() {
               <motion.h2
                 whileInView={reduceMotion ? undefined : { x: [0, -14, 0], opacity: [0.2, 1] }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.9, ease: [0.2, 0.9, 0.2, 1] }}
-              >
-                Core Disciplines
+              transition={{ duration: 0.9, ease: [0.2, 0.9, 0.2, 1] }}
+            >
+                {landingContent.services.eyebrow}
               </motion.h2>
               <motion.div
                 className={styles.sectionLine}
@@ -410,7 +279,7 @@ export default function App() {
               viewport={{ once: true, amount: 0.15 }}
               variants={sectionStagger}
             >
-              {serviceCards.map((card) => (
+              {landingContent.services.cards.map((card) => (
                 <motion.article
                   key={card.title}
                   className={card.wide ? styles.serviceCardWide : styles.serviceCard}
@@ -457,14 +326,11 @@ export default function App() {
             />
             <motion.header className={styles.experienceHeader} {...fadeUp(0.08, reduceMotion)}>
               <h2>
-                Engineering
+                {landingContent.experience.title.lineOne}
                 <br />
-                <span>Systematic</span> Scale.
+                <span>{landingContent.experience.title.highlight}</span> {landingContent.experience.title.lineTwo}
               </h2>
-              <p>
-                A timeline of architectural decisions, component library construction,
-                and the pursuit of unbreakable UI pipelines across modern frameworks.
-              </p>
+              <p>{landingContent.experience.description}</p>
             </motion.header>
 
             <div className={styles.timeline}>
@@ -478,7 +344,7 @@ export default function App() {
                 viewport={{ once: true, amount: 0.15 }}
                 variants={sectionStagger}
               >
-                {timelineItems.map((item) => (
+                {landingContent.experience.items.map((item) => (
                   <motion.article
                     key={item.period}
                     className={styles.timelineCard}
@@ -550,15 +416,11 @@ export default function App() {
             <div className={styles.skillsLayout}>
               <motion.header className={styles.skillsIntro} {...fadeUp(0.08, reduceMotion)}>
                 <h2>
-                  Technical
+                  {landingContent.skills.title.lineOne}
                   <br />
-                  <span>Arsenal.</span>
+                  <span>{landingContent.skills.title.highlight}</span>
                 </h2>
-                <p>
-                  Precision-engineered tools and methodologies for constructing robust,
-                  scalable, and ethereal digital experiences. Layered architecture meets
-                  fluid execution.
-                </p>
+                <p>{landingContent.skills.description}</p>
               </motion.header>
 
               <motion.div
@@ -575,7 +437,7 @@ export default function App() {
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, ease: [0.2, 0.9, 0.2, 1] }}
                 />
-                {skillCards.map((card, index) => {
+                {landingContent.skills.cards.map((card, index) => {
                   const classes = [
                     styles.skillCard,
                     card.offset === "low" ? styles.skillOffsetLow : "",
@@ -613,12 +475,15 @@ export default function App() {
                 })}
 
                 <motion.div className={styles.skillPills} variants={cardReveal}>
-                  <motion.div className={styles.skillPill} whileHover={reduceMotion ? undefined : { y: -6, scale: 1.02 }}>
-                    Accessibility
-                  </motion.div>
-                  <motion.div className={styles.skillPill} whileHover={reduceMotion ? undefined : { y: -6, scale: 1.02 }}>
-                    Performance
-                  </motion.div>
+                  {landingContent.skills.pills.map((pill) => (
+                    <motion.div
+                      key={pill}
+                      className={styles.skillPill}
+                      whileHover={reduceMotion ? undefined : { y: -6, scale: 1.02 }}
+                    >
+                      {pill}
+                    </motion.div>
+                  ))}
                 </motion.div>
               </motion.div>
             </div>
@@ -632,24 +497,24 @@ export default function App() {
           >
             <div className={styles.contactFade} aria-hidden="true" />
             <motion.div className={styles.contactInner} {...fadeUp(0.08, reduceMotion)}>
-              <p className={styles.contactEyebrow}>Initiate Sequence</p>
+              <p className={styles.contactEyebrow}>{landingContent.contact.eyebrow}</p>
               <h2>
-                Ready to build the
+                {landingContent.contact.title.lineOne}
                 <br />
-                next artifact?
+                {landingContent.contact.title.lineTwo}
               </h2>
               <div className={styles.contactActions}>
                 <motion.a
                   className={styles.contactButton}
-                  href="mailto:hello@murillo.dev"
+                  href={landingContent.contact.cta.href}
                   whileHover={reduceMotion ? undefined : { y: -6, scale: 1.04, boxShadow: "0 0 72px rgba(87, 241, 219, 0.3)" }}
                   whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 >
-                  Initialize Contact
+                  {landingContent.contact.cta.label}
                   <span aria-hidden="true">+</span>
                 </motion.a>
                 <div className={styles.contactLinks}>
-                  {socialLinks.map((label) => (
+                  {landingContent.contact.socialLinks.map((label) => (
                     <motion.a
                       key={label}
                       href="#contact"
@@ -670,9 +535,9 @@ export default function App() {
         </main>
 
         <footer className={styles.footer}>
-          <span>© 2024 LIQUID GLASS FRAMEWORK. ALL RIGHTS RESERVED.</span>
+          <span>{landingContent.footer.copyright}</span>
           <div className={styles.footerLinks}>
-            {["Github", "LinkedIn", "Source"].map((label) => (
+            {landingContent.footer.links.map((label) => (
               <a
                 key={label}
                 href="#contact"
