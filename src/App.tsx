@@ -239,15 +239,17 @@ export default function App() {
                   <span aria-hidden="true">+</span>
                 </motion.a>
               </motion.div>
-              <motion.div
-                className={styles.scrollHint}
-                aria-hidden="true"
-                animate={reduceMotion ? undefined : { y: [0, 16, 0], opacity: [0.35, 0.75, 0.35] }}
-                transition={reduceMotion ? undefined : { duration: 2.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              >
-                <span>{landingContent.hero.scrollHint}</span>
-                <div />
-              </motion.div>
+              <div className={styles.scrollHintWrap}>
+                <motion.div
+                  className={styles.scrollHint}
+                  aria-hidden="true"
+                  animate={reduceMotion ? undefined : { y: [0, 16, 0], opacity: [0.35, 0.75, 0.35] }}
+                  transition={reduceMotion ? undefined : { duration: 2.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                >
+                  <span>{landingContent.hero.scrollHint}</span>
+                  <div />
+                </motion.div>
+              </div>
             </div>
           </section>
 

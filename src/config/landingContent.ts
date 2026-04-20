@@ -94,7 +94,7 @@ export const landingContent: LandingContent = {
     work: "services",
   },
   nav: {
-    brand: "ARCHITECT.UX",
+    brand: "Murillo Martins",
     resumeLabel: "Resume",
     items: [
       { label: "Work", href: "#work" },

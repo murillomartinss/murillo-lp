@@ -244,11 +244,14 @@
   box-shadow: 0 0 30px rgba(45, 212, 191, 0.2);
 }
 
-.scrollHint {
+.scrollHintWrap {
   position: absolute;
   bottom: 3.5rem;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.scrollHint {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -606,6 +609,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
+  align-items: stretch;
 }
 
 .skillsGhostLine {
@@ -620,6 +624,9 @@
 
 .skillCard {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 2rem;
   border-radius: 16px;
   background: #1b1b1b;
@@ -633,15 +640,15 @@
 }
 
 .skillOffsetLow {
-  margin-top: 3rem;
+  margin-top: 0;
 }
 
 .skillOffsetHigh {
-  margin-top: -1rem;
+  margin-top: 0;
 }
 
 .skillOffsetMid {
-  margin-top: 2rem;
+  margin-top: 0;
 }
 
 .skillIcon {
