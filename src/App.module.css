@@ -515,14 +515,23 @@
   letter-spacing: 0.16em;
 }
 
-.timelineTop h3,
-.skillCard h3 {
+.timelineTop h3 {
   margin: 0;
   color: #ffffff;
   font-family: var(--font-headline);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
   letter-spacing: -0.05em;
+}
+
+.skillCard h3 {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-headline);
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .timelineCompany {
@@ -651,13 +660,24 @@
   margin-top: 0;
 }
 
+.skillCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.skillCardHeader h3 {
+  margin: 0;
+}
+
 .skillIcon {
   width: 3rem;
   height: 3rem;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.1rem;
   color: #57f1db;
   font-family: var(--font-headline);
   font-size: 1rem;
@@ -666,17 +686,37 @@
 
 .skillPills {
   grid-column: span 2;
+  position: relative;
+  margin-top: 1rem;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+.skillPillsTrack {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+.skillPills:hover .skillPillsTrack {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 .skillPill {
-  flex: 1;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   justify-content: center;
-  min-height: 4rem;
+  padding: 0 1.6rem;
+  min-height: 3.2rem;
   border-radius: 999px;
   border: 1px solid rgba(60, 74, 70, 0.3);
   background: #353535;
@@ -685,6 +725,14 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.skillPillIcon {
+  display: flex;
+  align-items: center;
+  color: #2dd4bf;
+  flex-shrink: 0;
 }
 
 .contactSection {
@@ -762,6 +810,12 @@
   letter-spacing: 0.14em;
 }
 
+.socialIcon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .contactUnderline {
   width: 0;
   height: 1px;
@@ -776,7 +830,7 @@
 .footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1.5rem;
   width: min(1240px, calc(100vw - 40px));
   margin: 0 auto;
@@ -839,9 +893,12 @@
     grid-template-columns: 1fr;
   }
 
-  .serviceCardWide,
-  .skillPills {
+  .serviceCardWide {
     grid-column: auto;
+  }
+
+  .skillPills {
+    grid-column: span 2;
   }
 
   .timeline {

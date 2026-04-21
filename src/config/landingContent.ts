@@ -81,7 +81,7 @@ export type LandingContent = {
       label: string;
       href: string;
     };
-    socialLinks: string[];
+    socialLinks: { label: string; href: string }[];
   };
   footer: {
     copyright: string;
@@ -95,148 +95,171 @@ export const landingContent: LandingContent = {
   },
   nav: {
     brand: "Murillo Martins",
-    resumeLabel: "Resume",
+    resumeLabel: "Currículo",
     items: [
-      { label: "Work", href: "#work" },
-      { label: "Services", href: "#services", active: true },
-      { label: "Experience", href: "#experience" },
-      { label: "Skills", href: "#skills" },
-      { label: "Contact", href: "#contact" },
+      { label: "Serviços", href: "#services" },
+      { label: "Experiência", href: "#experience" },
+      { label: "Habilidades", href: "#skills" },
+      { label: "Contato", href: "#contact" },
     ],
   },
   hero: {
     title: {
-      lineOne: "Architecting",
-      lineTwo: "The Digital",
-      highlight: "Frontier",
+      lineOne: "Arquitetando",
+      lineTwo: "A Fronteira",
+      highlight: "Digital",
     },
     description:
-      "Frontend Architect & Design System Specialist. Forging scalable, accessible, and high-performance digital experiences.",
+      "Desenvolvedor de Software especializado em Frontend & Design Systems. Construindo experiências digitais escaláveis, acessíveis e de alta performance.",
     cta: {
-      label: "Experience My Work",
+      label: "Conheça Meu Trabalho",
       href: "#work",
     },
-    scrollHint: "Scroll",
+    scrollHint: "Rolar",
   },
   services: {
-    eyebrow: "Core Disciplines",
+    eyebrow: "Serviços Prestados",
     cards: [
       {
-        title: "Design System Development",
+        title: "Landing Pages",
         description:
-          "Architecting comprehensive component libraries that bridge design and engineering, ensuring consistent UI across scale.",
-        icon: "A",
+          "Páginas de alta conversão, rápidas e responsivas. Do design ao deploy, com foco em performance e resultados.",
+        icon: "landing",
       },
       {
-        title: "Frontend Architecture",
+        title: "Sistemas Web",
         description:
-          "Structuring resilient, highly scalable frontend ecosystems. Focus on state management, routing paradigms, and modular monolith separation.",
-        icon: "M",
-        wide: true,
+          "Desenvolvimento de aplicações web completas, desde painéis administrativos até plataformas SaaS robustas e escaláveis.",
+        icon: "web",
       },
       {
-        title: "Performance Optimization",
+        title: "Design System",
         description:
-          "Ruthless minimization of bundle sizes, critical rendering path optimization, and memory leak mitigation for fluid experiences.",
-        icon: "C",
+          "Bibliotecas de componentes consistentes que conectam design e engenharia, acelerando o desenvolvimento em escala.",
+        icon: "designsystem",
       },
       {
-        title: "Accessibility (A11y)",
+        title: "Refatoração de Sistema",
         description:
-          "Deep expertise in WCAG compliance, semantic HTML, and ARIA roles. Ensuring digital inclusion is not an afterthought.",
-        icon: "T",
+          "Modernização de código legado com stack atual, melhorando manutenibilidade e performance sem perder funcionalidades.",
+        icon: "refactor",
       },
       {
-        title: "UI Engineering",
+        title: "Consultoria de Frontend",
         description:
-          "Crafting pixel-perfect, highly interactive interfaces that translate high-fidelity designs into robust code.",
-        icon: "G",
+          "Revisão de arquitetura, code review e definição de boas práticas para times que querem elevar a qualidade do frontend.",
+        icon: "consulting",
+      },
+      {
+        title: "Mentoria Técnica",
+        description:
+          "Acompanhamento personalizado de devs júnior e pleno em boas práticas, arquitetura e crescimento de carreira em frontend.",
+        icon: "mentoring",
       },
     ],
   },
   experience: {
     title: {
-      lineOne: "Engineering",
-      highlight: "Systematic",
-      lineTwo: "Scale.",
+      lineOne: "Carreira",
+      highlight: "Construída",
+      lineTwo: "com Propósito.",
     },
     description:
-      "A timeline of architectural decisions, component library construction, and the pursuit of unbreakable UI pipelines across modern frameworks.",
+      "Não apenas código — decisões que moldaram produtos, aceleraram times e deixaram uma marca em cada projeto.",
     items: [
       {
-        period: "2021 - PRESENT",
-        title: "Lead UI Architect",
-        company: "Nexus Systems Group",
+        period: "OUT 2022 - PRESENTE",
+        title: "Desenvolvedor Front-end Pleno",
+        company: "Ambev Tech",
         description:
-          "Spearheaded the consolidation of divergent UI paradigms into a unified, framework-agnostic design system. Engineered a robust core library serving both React and Angular ecosystems, significantly reducing feature time-to-market. Established Storybook as the ultimate source of truth for design tokens, component APIs, and interactive documentation.",
-        tags: ["React & Angular", "Storybook", "Design Tokens", "Tailwind CSS"],
-        badge: "DESIGN SYSTEMS FOCUS",
+          "Atuo no time de Design System contribuindo para a construção e evolução de bibliotecas de componentes reutilizáveis. Responsável por desenvolver, documentar e manter componentes que atendem múltiplos times de produto, garantindo consistência visual e agilidade no desenvolvimento em escala.",
+        tags: ["Design System", "React", "Azure DevOps", "Git"],
+        badge: "POSIÇÃO ATUAL",
         current: true,
       },
       {
-        period: "2018 - 2021",
-        title: "Senior Front-End Engineer",
-        company: "Aether Technologies",
+        period: "JAN 2022 - NOV 2022",
+        title: "Analista de Sustentação Pleno",
+        company: "Ambev Tech",
         description:
-          "Architected scalable front-end solutions for enterprise dashboards. Implemented rigorous automated testing methodologies, ensuring zero-regression deploys. Built and maintained complex CI/CD pipelines bridging the gap between front-end infrastructure and cloud deployments.",
-        tags: ["Jest & Cypress", "CI/CD Pipelines", "TypeScript Core", "Component Architecture"],
+          "Atuação no time de engenharia com atendimento de chamados via ServiceNow, suporte direto em C# e Python, troubleshooting em ambientes com MongoDB, Kubernetes e Datadog. Gestão de repositórios, branches, releases e pipelines no Azure DevOps, além de criação e manutenção de base de conhecimento interna.",
+        tags: ["Python", "C#", "Azure DevOps", "Kubernetes", "ServiceNow"],
+      },
+      {
+        period: "SET 2019 - JAN 2022",
+        title: "Analista I",
+        company: "Senac RS",
+        description:
+          "Atuação como analista de sustentação com foco em otimização de processos e proposição de soluções para as partes interessadas. Responsável pela administração do sistema de Gestão de Demandas, análise e implantação de novos sistemas, realização de capacitações internas e sustentação contínua de sistemas críticos.",
+        tags: ["SQL", "Gestão de Demandas", "Sustentação de Sistemas"],
+      },
+      {
+        period: "AGO 2018 - SET 2019",
+        title: "Estagiário",
+        company: "Senac RS",
+        description:
+          "Suporte de TI com atendimento interno via telefone e acesso remoto (VNC/TS/TeamViewer). Resolução de incidentes web, atendimento de requisições de acesso a sistemas internos, e-mail, internet e intranet. Monitoramento de links de comunicação (MPLS/Internet/Rádio), Firewall e Windows Server via Opmon.",
+        tags: ["Suporte TI", "Windows Server", "Firewall", "Redes"],
       },
     ],
   },
   skills: {
     title: {
-      lineOne: "Technical",
-      highlight: "Arsenal.",
+      lineOne: "Skills",
+      highlight: "Técnicas",
     },
     description:
-      "Precision-engineered tools and methodologies for constructing robust, scalable, and ethereal digital experiences. Layered architecture meets fluid execution.",
+      "Ferramentas e metodologias de precisão para construir experiências digitais robustas, escaláveis e etéreas. Arquitetura em camadas encontra execução fluida.",
     cards: [
       {
         title: "React",
         description:
-          "Component-driven architecture, advanced hooks ecosystem, and deeply optimized state management flows.",
-        icon: "</>",
+          "Arquitetura orientada a componentes, ecossistema avançado de hooks e fluxos de gerenciamento de estado profundamente otimizados.",
+        icon: "ReactIcon",
         offset: "low",
       },
       {
         title: "Angular",
         description:
-          "Enterprise-scale applications leveraging RxJS reactive paradigms and strict dependency injection.",
-        icon: "[]",
+          "Aplicações de escala corporativa com injeção de dependência rigorosa. Utilização de Signals para reatividade granular e performance otimizada.",
+        icon: "AngularIcon",
         offset: "high",
         emphasis: true,
       },
       {
         title: "TypeScript",
         description:
-          "Static typing orchestration, interface contracts, ensuring robust end-to-end type safety.",
-        icon: "{}",
+          "Orquestração de tipagem estática, contratos de interfaces, garantindo segurança de tipos robusta de ponta a ponta.",
+        icon: "TypeScriptIcon",
         offset: "mid",
       },
       {
         title: "Storybook",
         description:
-          "Isolated component laboratories, comprehensive design system documentation, and visual regression testing.",
-        icon: "SB",
+          "Laboratórios de componentes isolados, documentação abrangente de design system e testes de regressão visual.",
+        icon: "StorybookIcon",
         offset: "base",
       },
     ],
-    pills: ["Accessibility", "Performance"],
+    pills: ["Figma", "CSS / SCSS", "Supabase", "Git", "Azure DevOps", "GitHub", "Acessibilidade", "Performance"],
   },
   contact: {
-    eyebrow: "Initiate Sequence",
+    eyebrow: "Próximo Passo",
     title: {
-      lineOne: "Ready to build the",
-      lineTwo: "next artifact?",
+      lineOne: "Tem um projeto?",
+      lineTwo: "Me chama.",
     },
     cta: {
-      label: "Initialize Contact",
+      label: "Iniciar Contato",
       href: "mailto:hello@murillo.dev",
     },
-    socialLinks: ["LinkedIn", "GitHub"],
+    socialLinks: [
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/murillo-martins-ti/" },
+      { label: "GitHub", href: "https://github.com/murillomartinss" },
+    ],
   },
   footer: {
-    copyright: "© 2024 LIQUID GLASS FRAMEWORK. ALL RIGHTS RESERVED.",
-    links: ["Github", "LinkedIn", "Source"],
+    copyright: "Murillo Martins. Todos os direitos reservados.",
+    links: ["Github", "LinkedIn", "Código-Fonte"],
   },
 };

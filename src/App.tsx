@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useReducedMotion,
@@ -10,9 +10,29 @@ import {
 } from "framer-motion";
 import styles from "./App.module.css";
 import { landingContent } from "./config/landingContent";
+import FigmaIcon from "./assets/icons/figma.svg?react";
+import CssIcon from "./assets/icons/css.svg?react";
+import SupabaseIcon from "./assets/icons/supabase.svg?react";
+import GitIcon from "./assets/icons/git.svg?react";
+import AzureIcon from "./assets/icons/azure.svg?react";
+import GithubIcon from "./assets/icons/github.svg?react";
+import AccessibilityIcon from "./assets/icons/accessibility.svg?react";
+import PerformanceIcon from "./assets/icons/performance.svg?react";
+import ReactIcon from "./assets/icons/react.svg?react";
+import AngularIcon from "./assets/icons/angular.svg?react";
+import TypeScriptIcon from "./assets/icons/typescript.svg?react";
+import StorybookIcon from "./assets/icons/storybook.svg?react";
+import LandingIcon from "./assets/icons/landing.svg?react";
+import WebIcon from "./assets/icons/web.svg?react";
+import DesignSystemIcon from "./assets/icons/designsystem.svg?react";
+import RefactorIcon from "./assets/icons/refactor.svg?react";
+import ConsultingIcon from "./assets/icons/consulting.svg?react";
+import MentoringIcon from "./assets/icons/mentoring.svg?react";
+import LinkedinIcon from "./assets/icons/linkedin.svg?react";
 
 type FrameNavProps = {
   onNavigate: (hash: string) => void;
+  activeSection: string;
 };
 
 const sectionStagger: Variants = {
@@ -47,6 +67,38 @@ const cardReveal: Variants = {
   },
 };
 
+const serviceIcons: Record<string, React.ReactNode> = {
+  landing: <LandingIcon width={18} height={18} />,
+  web: <WebIcon width={18} height={18} />,
+  designsystem: <DesignSystemIcon width={18} height={18} />,
+  refactor: <RefactorIcon width={18} height={18} />,
+  consulting: <ConsultingIcon width={18} height={18} />,
+  mentoring: <MentoringIcon width={18} height={18} />,
+};
+
+const skillIcons: Record<string, React.ReactNode> = {
+  "ReactIcon": <ReactIcon width={22} height={22} />,
+  "AngularIcon": <AngularIcon width={22} height={22} />,
+  "TypeScriptIcon": <TypeScriptIcon width={22} height={22} />,
+  "StorybookIcon": <StorybookIcon width={22} height={22} />,
+};
+
+const socialIcons: Record<string, React.ReactNode> = {
+  "LinkedIn": <LinkedinIcon width={18} height={18} />,
+  "GitHub": <GithubIcon width={18} height={18} />,
+};
+
+const pillIcons: Record<string, React.ReactNode> = {
+  "Figma": <FigmaIcon width={14} height={14} />,
+  "CSS / SCSS": <CssIcon width={14} height={14} />,
+  "Supabase": <SupabaseIcon width={14} height={14} />,
+  "Git": <GitIcon width={14} height={14} />,
+  "Azure DevOps": <AzureIcon width={14} height={14} />,
+  "GitHub": <GithubIcon width={14} height={14} />,
+  "Acessibilidade": <AccessibilityIcon width={14} height={14} />,
+  "Performance": <PerformanceIcon width={14} height={14} />,
+};
+
 function fadeUp(delay = 0, reduceMotion: boolean | null = false): MotionProps {
   if (reduceMotion) {
     return {};
@@ -60,7 +112,7 @@ function fadeUp(delay = 0, reduceMotion: boolean | null = false): MotionProps {
   };
 }
 
-function FrameNav({ onNavigate }: FrameNavProps) {
+function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
   return (
     <header className={styles.navWrap}>
       <div className={styles.nav}>
@@ -78,7 +130,11 @@ function FrameNav({ onNavigate }: FrameNavProps) {
           {landingContent.nav.items.map((item) => (
             <a
               key={item.label}
-              className={item.active ? styles.navLinkActive : styles.navLink}
+              className={
+                (landingContent.aliases[item.href.slice(1)] ?? item.href.slice(1)) === activeSection
+                  ? styles.navLinkActive
+                  : styles.navLink
+              }
               href={item.href}
               onClick={(event) => {
                 event.preventDefault();
@@ -106,6 +162,7 @@ function FrameNav({ onNavigate }: FrameNavProps) {
 
 export default function App() {
   const reduceMotion = useReducedMotion();
+  const [activeSection, setActiveSection] = useState("hero");
   const scrollViewportRef = useRef<HTMLDivElement | null>(null);
   const servicesRef = useRef<HTMLElement | null>(null);
   const experienceRef = useRef<HTMLElement | null>(null);
@@ -138,6 +195,27 @@ export default function App() {
     requestAnimationFrame(() => {
       scrollToHash(initialHash, "auto");
     });
+  }, []);
+
+  useEffect(() => {
+    const sectionIds = ["hero", "services", "experience", "skills", "contact"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { root: scrollViewportRef.current, threshold: 0.4 }
+    );
+
+    for (const id of sectionIds) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
   const { scrollYProgress } = useScroll({ container: scrollViewportRef });
@@ -202,7 +280,7 @@ export default function App() {
           animate={reduceMotion ? undefined : { scale: [1, 0.92, 1.06, 1], opacity: [0.7, 0.92, 0.78, 0.7] }}
           transition={reduceMotion ? undefined : { duration: 16, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
-        <FrameNav onNavigate={scrollToHash} />
+        <FrameNav onNavigate={scrollToHash} activeSection={activeSection} />
 
         <main className={styles.canvas}>
           <section id="hero" className={styles.heroSection}>
@@ -302,7 +380,7 @@ export default function App() {
                     />
                   ) : null}
                   <div className={styles.serviceIcon} aria-hidden="true">
-                    {card.icon}
+                    {serviceIcons[card.icon] ?? card.icon}
                   </div>
                   <h3>{card.title}</h3>
                   <p>{card.description}</p>
@@ -467,25 +545,26 @@ export default function App() {
                       }
                       transition={{ duration: 0.35 }}
                     >
-                      <div className={styles.skillIcon} aria-hidden="true">
-                        {card.icon}
+                      <div className={styles.skillCardHeader}>
+                        <div className={styles.skillIcon} aria-hidden="true">
+                          {skillIcons[card.icon] ?? card.icon}
+                        </div>
+                        <h3>{card.title}</h3>
                       </div>
-                      <h3>{card.title}</h3>
                       <p>{card.description}</p>
                     </motion.article>
                   );
                 })}
 
                 <motion.div className={styles.skillPills} variants={cardReveal}>
-                  {landingContent.skills.pills.map((pill) => (
-                    <motion.div
-                      key={pill}
-                      className={styles.skillPill}
-                      whileHover={reduceMotion ? undefined : { y: -6, scale: 1.02 }}
-                    >
-                      {pill}
-                    </motion.div>
-                  ))}
+                  <div className={styles.skillPillsTrack}>
+                    {[...landingContent.skills.pills, ...landingContent.skills.pills].map((pill, i) => (
+                      <div key={i} className={styles.skillPill}>
+                        {pillIcons[pill] && <span className={styles.skillPillIcon}>{pillIcons[pill]}</span>}
+                        {pill}
+                      </div>
+                    ))}
+                  </div>
                 </motion.div>
               </motion.div>
             </div>
@@ -516,16 +595,15 @@ export default function App() {
                   <span aria-hidden="true">+</span>
                 </motion.a>
                 <div className={styles.contactLinks}>
-                  {landingContent.contact.socialLinks.map((label) => (
+                  {landingContent.contact.socialLinks.map(({ label, href }) => (
                     <motion.a
                       key={label}
-                      href="#contact"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        scrollToHash("#contact");
-                      }}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       whileHover={reduceMotion ? undefined : { y: -4 }}
                     >
+                      {socialIcons[label] && <span className={styles.socialIcon} aria-hidden="true">{socialIcons[label]}</span>}
                       {label}
                       <span className={styles.contactUnderline} aria-hidden="true" />
                     </motion.a>
@@ -537,21 +615,7 @@ export default function App() {
         </main>
 
         <footer className={styles.footer}>
-          <span>{landingContent.footer.copyright}</span>
-          <div className={styles.footerLinks}>
-            {landingContent.footer.links.map((label) => (
-              <a
-                key={label}
-                href="#contact"
-                onClick={(event) => {
-                  event.preventDefault();
-                  scrollToHash("#contact");
-                }}
-              >
-                {label}
-              </a>
-            ))}
-          </div>
+          <span>© {new Date().getFullYear()} {landingContent.footer.copyright}</span>
         </footer>
       </div>
     </div>
