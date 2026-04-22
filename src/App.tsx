@@ -29,6 +29,7 @@ import RefactorIcon from "./assets/icons/refactor.svg?react";
 import ConsultingIcon from "./assets/icons/consulting.svg?react";
 import MentoringIcon from "./assets/icons/mentoring.svg?react";
 import LinkedinIcon from "./assets/icons/linkedin.svg?react";
+import LogoIcon from "./assets/logo.svg?react";
 
 type FrameNavProps = {
   onNavigate: (hash: string) => void;
@@ -124,7 +125,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
             onNavigate("#hero");
           }}
         >
-          {landingContent.nav.brand}
+          <LogoIcon width={32} height={24} aria-label="Murillo Martins" />
         </a>
         <nav className={styles.navLinks} aria-label="Primary">
           {landingContent.nav.items.map((item) => (
@@ -145,16 +146,6 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
             </a>
           ))}
         </nav>
-        <a
-          className={styles.resumeButton}
-          href="#contact"
-          onClick={(event) => {
-            event.preventDefault();
-            onNavigate("#contact");
-          }}
-        >
-          {landingContent.nav.resumeLabel}
-        </a>
       </div>
     </header>
   );

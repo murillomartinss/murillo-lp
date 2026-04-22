@@ -87,12 +87,10 @@
 
 .brand,
 .brand:visited {
-  color: #57f1db;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
-  font-family: var(--font-headline);
-  font-size: 1.35rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  cursor: pointer;
 }
 
 .navLinks {
