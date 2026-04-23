@@ -3,9 +3,6 @@ import {
   AnimatePresence,
   motion,
   useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
   type MotionProps,
   type Variants,
 } from "framer-motion";
@@ -123,6 +120,16 @@ function fadeUp(delay = 0, reduceMotion: boolean | null = false): MotionProps {
 }
 
 function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleNavClick = (href: string) => {
+    setMenuOpen(false);
+    onNavigate(href);
+  };
+
+  const isActive = (href: string) =>
+    (landingContent.aliases[href.slice(1)] ?? href.slice(1)) === activeSection;
+
   return (
     <header className={styles.navWrap}>
       <div className={styles.nav}>
@@ -131,7 +138,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
           href="#hero"
           onClick={(event) => {
             event.preventDefault();
-            onNavigate("#hero");
+            handleNavClick("#hero");
           }}
         >
           <LogoIcon width={36} height={36} className={styles.logoIcon} aria-label="Murillo Martins" />
@@ -140,11 +147,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
           {landingContent.nav.items.map((item) => (
             <a
               key={item.label}
-              className={
-                (landingContent.aliases[item.href.slice(1)] ?? item.href.slice(1)) === activeSection
-                  ? styles.navLinkActive
-                  : styles.navLink
-              }
+              className={isActive(item.href) ? styles.navLinkActive : styles.navLink}
               href={item.href}
               onClick={(event) => {
                 event.preventDefault();
@@ -155,7 +158,43 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
             </a>
           ))}
         </nav>
+        <button
+          className={[styles.hamburger, menuOpen ? styles.hamburgerOpen : ""].filter(Boolean).join(" ")}
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={menuOpen}
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
       </div>
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            className={styles.navMobileMenu}
+            aria-label="Menu mobile"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
+            {landingContent.nav.items.map((item) => (
+              <a
+                key={item.label}
+                className={isActive(item.href) ? styles.navMobileLinkActive : styles.navMobileLink}
+                href={item.href}
+                onClick={(event) => {
+                  event.preventDefault();
+                  handleNavClick(item.href);
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
@@ -166,10 +205,6 @@ export default function App() {
   const [activeSection, setActiveSection] = useState("hero");
   const [emailCopied, setEmailCopied] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement | null>(null);
-  const servicesRef = useRef<HTMLElement | null>(null);
-  const experienceRef = useRef<HTMLElement | null>(null);
-  const skillsRef = useRef<HTMLElement | null>(null);
-  const contactRef = useRef<HTMLElement | null>(null);
 
   const scrollToHash = (hash: string, behavior: ScrollBehavior = reduceMotion ? "auto" : "smooth") => {
     const normalizedHash = hash.startsWith("#") ? hash.slice(1) : hash;
@@ -182,11 +217,7 @@ export default function App() {
     }
 
     const HEADER_OFFSET = 96;
-    // Experience section is much taller → parallax y is larger at nav time, needs less offset
-    const SECTION_ADJUSTMENTS: Record<string, number> = { experience: 96 };
-    const adjustment = SECTION_ADJUSTMENTS[targetId] ?? 0;
 
-    // offsetTop traversal avoids transform (parallax y) affecting the calculation
     let layoutTop = 0;
     let el: HTMLElement | null = target;
     while (el && el !== viewport) {
@@ -194,7 +225,7 @@ export default function App() {
       el = el.offsetParent as HTMLElement | null;
     }
 
-    viewport.scrollTo({ top: layoutTop - HEADER_OFFSET + adjustment, behavior });
+    viewport.scrollTo({ top: layoutTop - HEADER_OFFSET, behavior });
     setActiveSection(targetId);
 
     if (window.location.hash !== `#${targetId}`) {
@@ -248,49 +279,6 @@ export default function App() {
     return () => viewport.removeEventListener("scroll", updateActive);
   }, []);
 
-  const { scrollYProgress } = useScroll({ container: scrollViewportRef });
-  const heroYOffset = useTransform(scrollYProgress, [0, 0.28], [0, reduceMotion ? 0 : -140]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.24], [1, reduceMotion ? 1 : 0.94]);
-  const leftGlowY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -220]);
-  const rightGlowY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : 180]);
-
-  const { scrollYProgress: servicesProgress } = useScroll({
-    container: scrollViewportRef,
-    target: servicesRef,
-    offset: ["start 90%", "end 10%"],
-  });
-  const { scrollYProgress: experienceProgress } = useScroll({
-    container: scrollViewportRef,
-    target: experienceRef,
-    offset: ["start 90%", "end 10%"],
-  });
-  const { scrollYProgress: skillsProgress } = useScroll({
-    container: scrollViewportRef,
-    target: skillsRef,
-    offset: ["start 90%", "end 10%"],
-  });
-  const { scrollYProgress: contactProgress } = useScroll({
-    container: scrollViewportRef,
-    target: contactRef,
-    offset: ["start 92%", "end 8%"],
-  });
-
-  const servicesY = useTransform(servicesProgress, [0, 0.55, 1], [reduceMotion ? 0 : 180, 0, reduceMotion ? 0 : -110]);
-  const servicesOpacity = useTransform(servicesProgress, [0, 0.18, 0.84, 1], [0.18, 1, 1, reduceMotion ? 1 : 0.52]);
-
-  const experienceY = useTransform(experienceProgress, [0, 0.55, 1], [reduceMotion ? 0 : 190, 0, reduceMotion ? 0 : -120]);
-  const experienceOpacity = useTransform(experienceProgress, [0, 0.2, 0.88, 1], [0.12, 1, 1, reduceMotion ? 1 : 0.56]);
-  const lineProgress = useSpring(useTransform(experienceProgress, [0.15, 0.82], [0, 1]), {
-    stiffness: 120,
-    damping: 24,
-    mass: 0.3,
-  });
-
-  const skillsY = useTransform(skillsProgress, [0, 0.55, 1], [reduceMotion ? 0 : 180, 0, reduceMotion ? 0 : -115]);
-  const skillsOpacity = useTransform(skillsProgress, [0, 0.2, 0.9, 1], [0.14, 1, 1, reduceMotion ? 1 : 0.5]);
-
-  const contactY = useTransform(contactProgress, [0, 0.55, 1], [reduceMotion ? 0 : 140, 0, reduceMotion ? 0 : -70]);
-  const contactOpacity = useTransform(contactProgress, [0, 0.2, 1], [0.2, 1, 1]);
 
   return (
     <>
@@ -303,14 +291,12 @@ export default function App() {
         <motion.div
           className={styles.glowLeft}
           aria-hidden="true"
-          style={{ y: leftGlowY }}
           animate={reduceMotion ? undefined : { scale: [1, 1.08, 0.96, 1], opacity: [0.8, 1, 0.9, 0.8] }}
           transition={reduceMotion ? undefined : { duration: 14, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
         <motion.div
           className={styles.glowRight}
           aria-hidden="true"
-          style={{ y: rightGlowY }}
           animate={reduceMotion ? undefined : { scale: [1, 0.92, 1.06, 1], opacity: [0.7, 0.92, 0.78, 0.7] }}
           transition={reduceMotion ? undefined : { duration: 16, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
@@ -321,7 +307,6 @@ export default function App() {
             <div className={styles.heroFrame}>
               <motion.div
                 className={styles.heroInner}
-                style={{ y: heroYOffset, scale: heroScale, opacity: 1 }}
                 initial={reduceMotion ? undefined : "hidden"}
                 animate={reduceMotion ? undefined : "show"}
                 variants={sectionStagger}
@@ -365,11 +350,9 @@ export default function App() {
             </div>
           </section>
 
-          <motion.section
-            ref={servicesRef}
+          <section
             id="services"
-            className={[styles.servicesSection, styles.sectionPanel].join(" ")}
-            style={{ y: servicesY, opacity: servicesOpacity }}
+            className={styles.servicesSection}
           >
             <motion.div className={styles.sectionHeader} {...fadeUp(0.06, reduceMotion)}>
               <motion.h2
@@ -421,16 +404,11 @@ export default function App() {
                 </motion.article>
               ))}
             </motion.div>
-          </motion.section>
+          </section>
 
-          <motion.section
-            ref={experienceRef}
+          <section
             id="experience"
-            className={[styles.experienceSection, styles.sectionPanel].join(" ")}
-            style={{
-              y: experienceY,
-              opacity: experienceOpacity,
-            }}
+            className={styles.experienceSection}
           >
             <motion.div
               className={styles.experienceGlow}
@@ -449,7 +427,7 @@ export default function App() {
 
             <div className={styles.timeline}>
               <div className={styles.timelineLine} aria-hidden="true">
-                <motion.div className={styles.timelineLineProgress} style={{ scaleY: lineProgress }} />
+                <div className={styles.timelineLineProgress} />
               </div>
               <motion.div
                 className={styles.timelineItems}
@@ -513,13 +491,11 @@ export default function App() {
                 ))}
               </motion.div>
             </div>
-          </motion.section>
+          </section>
 
-          <motion.section
-            ref={skillsRef}
+          <section
             id="skills"
-            className={[styles.skillsSection, styles.sectionPanel].join(" ")}
-            style={{ y: skillsY, opacity: skillsOpacity }}
+            className={styles.skillsSection}
           >
             <motion.div
               className={styles.skillsGlow}
@@ -602,13 +578,11 @@ export default function App() {
                 </motion.div>
               </motion.div>
             </div>
-          </motion.section>
+          </section>
 
-          <motion.section
-            ref={contactRef}
+          <section
             id="contact"
-            className={[styles.contactSection, styles.sectionPanel].join(" ")}
-            style={{ y: contactY, opacity: contactOpacity }}
+            className={styles.contactSection}
           >
             <div className={styles.contactFade} aria-hidden="true" />
             <motion.div className={styles.contactInner} {...fadeUp(0.08, reduceMotion)}>
@@ -665,11 +639,14 @@ export default function App() {
                 </div>
               </div>
             </motion.div>
-          </motion.section>
+          </section>
         </main>
 
         <footer className={styles.footer}>
-          <span>© {new Date().getFullYear()} {landingContent.footer.copyright}</span>
+          <span>
+            © {new Date().getFullYear()} Murillo Martins.
+            <span className={styles.footerBreak}> Todos os direitos reservados.</span>
+          </span>
         </footer>
       </div>
     </div>
