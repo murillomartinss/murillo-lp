@@ -20,7 +20,7 @@
 }
 
 .scrollViewport::-webkit-scrollbar-thumb {
-  background: rgba(87, 241, 219, 0.12);
+  background: rgba(var(--accent-rgb), 0.12);
 }
 
 .noise {
@@ -31,7 +31,7 @@
   opacity: 0.14;
   background:
     radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.02) 0, transparent 22%),
-    radial-gradient(circle at 80% 10%, rgba(87, 241, 219, 0.025) 0, transparent 18%),
+    radial-gradient(circle at 80% 10%, rgba(var(--accent-rgb), 0.025) 0, transparent 18%),
     linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
   background-size: auto, auto, 140px 140px, 140px 140px;
@@ -52,7 +52,7 @@
   left: -12%;
   width: 44rem;
   height: 44rem;
-  background: radial-gradient(circle, rgba(87, 241, 219, 0.12), transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.12), transparent 70%);
 }
 
 .glowRight {
@@ -60,7 +60,7 @@
   bottom: 18%;
   width: 36rem;
   height: 36rem;
-  background: radial-gradient(circle, rgba(98, 208, 194, 0.1), transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-2-rgb), 0.1), transparent 70%);
 }
 
 .navWrap {
@@ -91,6 +91,12 @@
   align-items: center;
   text-decoration: none;
   cursor: pointer;
+  overflow: visible;
+}
+
+.logoIcon {
+  transform: scale(1.8);
+  transform-origin: left center;
 }
 
 .navLinks {
@@ -118,9 +124,9 @@
 
 .navLinkActive,
 .navLinkActive:visited {
-  color: #2dd4bf;
+  color: #ffffff;
   padding-bottom: 0.35rem;
-  border-bottom: 2px solid #2dd4bf;
+  border-bottom: 2px solid var(--accent);
 }
 
 .resumeButton,
@@ -130,16 +136,16 @@
   justify-content: center;
   padding: 0.8rem 1.3rem;
   border-radius: 999px;
-  border: 1px solid rgba(45, 212, 191, 0.2);
-  color: #2dd4bf;
-  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(var(--accent-2-rgb), 0.2);
+  color: var(--accent-2);
+  background: rgba(var(--accent-2-rgb), 0.1);
   text-decoration: none;
   font-family: var(--font-headline);
   font-size: 0.66rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  box-shadow: 0 0 15px rgba(45, 212, 191, 0.1);
+  box-shadow: 0 0 15px rgba(var(--accent-2-rgb), 0.1);
 }
 
 .canvas {
@@ -154,7 +160,6 @@
 .skillsSection {
   width: min(1240px, calc(100vw - 40px));
   margin: 0 auto;
-  scroll-margin-top: 7rem;
 }
 
 .sectionPanel {
@@ -202,14 +207,14 @@
   text-transform: uppercase;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  background: linear-gradient(135deg, #ffffff 0%, #565656 62%, rgba(87, 241, 219, 0.42) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #565656 62%, rgba(var(--accent-rgb), 0.42) 100%);
   -webkit-background-clip: text;
   background-clip: text;
 }
 
 .heroTitle span {
   -webkit-text-fill-color: transparent;
-  background: linear-gradient(135deg, #54f5dd 0%, #1f8f83 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 50%, #000) 100%);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -229,17 +234,17 @@
   justify-content: center;
   gap: 0.6rem;
   margin: 0 auto;
-  padding: 1rem 1.7rem;
+  padding: 1.2rem 2rem;
   border-radius: 999px;
-  background: #2dd4bf;
-  color: #003731;
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  background: var(--accent-2);
+  color: #ffffff;
   text-decoration: none;
-  font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-family: var(--font-headline);
+  font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  box-shadow: 0 0 30px rgba(45, 212, 191, 0.2);
 }
 
 .scrollHintWrap {
@@ -258,7 +263,7 @@
 }
 
 .scrollHint span {
-  color: #2dd4bf;
+  color: #93c5fd;
   font-family: var(--font-body);
   font-size: 0.6rem;
   text-transform: uppercase;
@@ -268,7 +273,7 @@
 .scrollHint div {
   width: 1px;
   height: 3rem;
-  background: linear-gradient(180deg, #2dd4bf, transparent);
+  background: linear-gradient(180deg, #93c5fd, transparent);
 }
 
 .servicesSection {
@@ -294,7 +299,7 @@
 .sectionLine {
   width: 6rem;
   height: 3px;
-  background: linear-gradient(90deg, #2dd4bf, transparent);
+  background: linear-gradient(90deg, var(--accent-2), transparent);
   transform-origin: left center;
 }
 
@@ -327,7 +332,7 @@
   background:
     linear-gradient(180deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.5)),
     linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 35%),
-    radial-gradient(circle at 20% 20%, rgba(45, 212, 191, 0.08), transparent 28%),
+    radial-gradient(circle at 20% 20%, rgba(var(--accent-2-rgb), 0.08), transparent 28%),
     repeating-linear-gradient(
       0deg,
       rgba(255, 255, 255, 0.03) 0,
@@ -357,7 +362,7 @@
   margin-bottom: 1.4rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.05);
-  color: #2dd4bf;
+  color: var(--accent);
   font-family: var(--font-headline);
   font-size: 0.95rem;
   font-weight: 700;
@@ -398,7 +403,7 @@
   width: 36rem;
   height: 36rem;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(87, 241, 219, 0.08), transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.08), transparent 70%);
   filter: blur(100px);
   pointer-events: none;
 }
@@ -424,7 +429,7 @@
 
 .experienceHeader h2 span,
 .skillsIntro h2 span {
-  color: #57f1db;
+  color: var(--accent);
 }
 
 .experienceHeader p,
@@ -455,7 +460,7 @@
   width: 100%;
   height: 100%;
   transform-origin: top center;
-  background: linear-gradient(180deg, rgba(87, 241, 219, 0.95), rgba(87, 241, 219, 0.1));
+  background: linear-gradient(180deg, rgba(var(--accent-rgb), 0.95), rgba(var(--accent-rgb), 0.1));
 }
 
 .timelineItems {
@@ -487,12 +492,12 @@
 }
 
 .timelineNode {
-  background: rgba(87, 241, 219, 0.45);
+  background: rgba(var(--accent-rgb), 0.45);
 }
 
 .timelineNodeCurrent {
-  background: #57f1db;
-  box-shadow: 0 0 15px rgba(87, 241, 219, 0.8), 0 0 0 4px #0a0a0a;
+  background: var(--accent);
+  box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.8), 0 0 0 4px #0a0a0a;
 }
 
 .timelineTop {
@@ -505,7 +510,7 @@
 
 .timelinePeriod {
   margin-bottom: 0.8rem;
-  color: #57f1db;
+  color: #a0a8b0;
   font-family: var(--font-body);
   font-size: 0.7rem;
   font-weight: 600;
@@ -592,7 +597,7 @@
   width: 38rem;
   height: 38rem;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(87, 241, 219, 0.06), transparent 72%);
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.06), transparent 72%);
   filter: blur(100px);
   pointer-events: none;
 }
@@ -676,7 +681,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #57f1db;
+  color: var(--accent);
   font-family: var(--font-headline);
   font-size: 1rem;
   font-weight: 700;
@@ -729,7 +734,7 @@
 .skillPillIcon {
   display: flex;
   align-items: center;
-  color: #2dd4bf;
+  color: var(--accent-2);
   flex-shrink: 0;
 }
 
@@ -759,7 +764,7 @@
 
 .contactEyebrow {
   margin: 0 0 1rem;
-  color: #57f1db;
+  color: #a0a8b0;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.22em;
@@ -778,17 +783,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.7rem;
+  gap: 0.6rem;
   padding: 1.2rem 2rem;
-  background: #57f1db;
-  color: #003731;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  background: var(--accent-2);
+  color: #ffffff;
   text-decoration: none;
   font-family: var(--font-headline);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  box-shadow: 0 0 40px rgba(87, 241, 219, 0.15);
 }
 
 .contactLinks {
@@ -817,7 +823,7 @@
 .contactUnderline {
   width: 0;
   height: 1px;
-  background: #57f1db;
+  background: var(--accent);
   transition: width 240ms ease;
 }
 

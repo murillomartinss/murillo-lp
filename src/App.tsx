@@ -125,7 +125,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
             onNavigate("#hero");
           }}
         >
-          <LogoIcon width={32} height={24} aria-label="Murillo Martins" />
+          <LogoIcon width={36} height={36} className={styles.logoIcon} aria-label="Murillo Martins" />
         </a>
         <nav className={styles.navLinks} aria-label="Primary">
           {landingContent.nav.items.map((item) => (
@@ -164,12 +164,27 @@ export default function App() {
     const normalizedHash = hash.startsWith("#") ? hash.slice(1) : hash;
     const targetId = landingContent.aliases[normalizedHash] ?? normalizedHash;
     const target = document.getElementById(targetId);
+    const viewport = scrollViewportRef.current;
 
-    if (!target) {
+    if (!target || !viewport) {
       return;
     }
 
-    target.scrollIntoView({ behavior, block: "start" });
+    const HEADER_OFFSET = 96;
+    // Experience section is much taller → parallax y is larger at nav time, needs less offset
+    const SECTION_ADJUSTMENTS: Record<string, number> = { experience: 96 };
+    const adjustment = SECTION_ADJUSTMENTS[targetId] ?? 0;
+
+    // offsetTop traversal avoids transform (parallax y) affecting the calculation
+    let layoutTop = 0;
+    let el: HTMLElement | null = target;
+    while (el && el !== viewport) {
+      layoutTop += el.offsetTop;
+      el = el.offsetParent as HTMLElement | null;
+    }
+
+    viewport.scrollTo({ top: layoutTop - HEADER_OFFSET + adjustment, behavior });
+    setActiveSection(targetId);
 
     if (window.location.hash !== `#${targetId}`) {
       window.history.replaceState(null, "", `#${targetId}`);
@@ -189,24 +204,37 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const viewport = scrollViewportRef.current;
+    if (!viewport) return;
+
     const sectionIds = ["hero", "services", "experience", "skills", "contact"];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
+
+    const updateActive = () => {
+      const viewportRect = viewport.getBoundingClientRect();
+      const activationLine = viewportRect.height * 0.35;
+
+      let best = sectionIds[0];
+      let bestDist = Infinity;
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top - viewportRect.top;
+        if (top <= activationLine) {
+          const dist = activationLine - top;
+          if (dist < bestDist) {
+            bestDist = dist;
+            best = id;
           }
         }
-      },
-      { root: scrollViewportRef.current, threshold: 0.4 }
-    );
+      }
 
-    for (const id of sectionIds) {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    }
+      setActiveSection(best);
+    };
 
-    return () => observer.disconnect();
+    viewport.addEventListener("scroll", updateActive, { passive: true });
+    updateActive();
+    return () => viewport.removeEventListener("scroll", updateActive);
   }, []);
 
   const { scrollYProgress } = useScroll({ container: scrollViewportRef });
@@ -301,7 +329,7 @@ export default function App() {
                     scrollToHash(landingContent.hero.cta.href);
                   }}
                   variants={cardReveal}
-                  whileHover={reduceMotion ? undefined : { y: -5, scale: 1.04, boxShadow: "0 0 60px rgba(45, 212, 191, 0.4)" }}
+                  whileHover={reduceMotion ? undefined : { backgroundColor: "#1a6fe0", boxShadow: "0 0 60px rgba(29, 111, 216, 0.4)" }}
                   whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 >
                   {landingContent.hero.cta.label}
@@ -579,7 +607,7 @@ export default function App() {
                 <motion.a
                   className={styles.contactButton}
                   href={landingContent.contact.cta.href}
-                  whileHover={reduceMotion ? undefined : { y: -6, scale: 1.04, boxShadow: "0 0 72px rgba(87, 241, 219, 0.3)" }}
+                  whileHover={reduceMotion ? undefined : { backgroundColor: "#1a6fe0", boxShadow: "0 0 72px rgba(29, 111, 216, 0.4)" }}
                   whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 >
                   {landingContent.contact.cta.label}
