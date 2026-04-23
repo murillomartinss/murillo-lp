@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  AnimatePresence,
   motion,
   useReducedMotion,
   useScroll,
@@ -10,6 +11,7 @@ import {
 } from "framer-motion";
 import styles from "./App.module.css";
 import { landingContent } from "./config/landingContent";
+import SplashScreen from "./components/SplashScreen";
 import FigmaIcon from "./assets/icons/figma.svg?react";
 import CssIcon from "./assets/icons/css.svg?react";
 import SupabaseIcon from "./assets/icons/supabase.svg?react";
@@ -29,6 +31,8 @@ import RefactorIcon from "./assets/icons/refactor.svg?react";
 import ConsultingIcon from "./assets/icons/consulting.svg?react";
 import MentoringIcon from "./assets/icons/mentoring.svg?react";
 import LinkedinIcon from "./assets/icons/linkedin.svg?react";
+import WhatsAppIcon from "./assets/icons/whatsapp.svg?react";
+import EmailIcon from "./assets/icons/email.svg?react";
 import LogoIcon from "./assets/logo.svg?react";
 
 type FrameNavProps = {
@@ -87,6 +91,11 @@ const skillIcons: Record<string, React.ReactNode> = {
 const socialIcons: Record<string, React.ReactNode> = {
   "LinkedIn": <LinkedinIcon width={18} height={18} />,
   "GitHub": <GithubIcon width={18} height={18} />,
+};
+
+const ctaIcons: Record<string, React.ReactNode> = {
+  whatsapp: <WhatsAppIcon width={16} height={16} />,
+  email: <EmailIcon width={16} height={16} />,
 };
 
 const pillIcons: Record<string, React.ReactNode> = {
@@ -153,7 +162,9 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
 
 export default function App() {
   const reduceMotion = useReducedMotion();
+  const [splashDone, setSplashDone] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const [emailCopied, setEmailCopied] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement | null>(null);
   const servicesRef = useRef<HTMLElement | null>(null);
   const experienceRef = useRef<HTMLElement | null>(null);
@@ -282,6 +293,10 @@ export default function App() {
   const contactOpacity = useTransform(contactProgress, [0, 0.2, 1], [0.2, 1, 1]);
 
   return (
+    <>
+      <AnimatePresence>
+        {!splashDone && <SplashScreen key="splash" onComplete={() => setSplashDone(true)} />}
+      </AnimatePresence>
     <div className={styles.page}>
       <div ref={scrollViewportRef} className={styles.scrollViewport}>
         <div className={styles.noise} aria-hidden="true" />
@@ -604,15 +619,35 @@ export default function App() {
                 {landingContent.contact.title.lineTwo}
               </h2>
               <div className={styles.contactActions}>
-                <motion.a
-                  className={styles.contactButton}
-                  href={landingContent.contact.cta.href}
-                  whileHover={reduceMotion ? undefined : { backgroundColor: "#1a6fe0", boxShadow: "0 0 72px rgba(29, 111, 216, 0.4)" }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                >
-                  {landingContent.contact.cta.label}
-                  <span aria-hidden="true">+</span>
-                </motion.a>
+                <div className={styles.contactButtons}>
+                  {landingContent.contact.ctas.map((cta, i) => {
+                    const isEmail = cta.href.startsWith("mailto:");
+                    const email = isEmail ? cta.href.replace("mailto:", "") : null;
+                    return (
+                      <motion.a
+                        key={cta.icon}
+                        className={i === 0 ? styles.contactButton : styles.contactButtonOutline}
+                        href={cta.href}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (isEmail && email) {
+                            navigator.clipboard.writeText(email).then(() => {
+                              setEmailCopied(true);
+                              setTimeout(() => setEmailCopied(false), 2000);
+                            });
+                          } else {
+                            window.open(cta.href, "_blank", "noopener,noreferrer");
+                          }
+                        }}
+                        whileHover={reduceMotion ? undefined : { boxShadow: "0 0 56px rgba(29, 111, 216, 0.35)" }}
+                        whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                      >
+                        <span className={styles.ctaIcon} aria-hidden="true">{ctaIcons[cta.icon]}</span>
+                        {isEmail ? (emailCopied ? "Copiado!" : cta.label) : cta.label}
+                      </motion.a>
+                    );
+                  })}
+                </div>
                 <div className={styles.contactLinks}>
                   {landingContent.contact.socialLinks.map(({ label, href }) => (
                     <motion.a
@@ -638,5 +673,6 @@ export default function App() {
         </footer>
       </div>
     </div>
+    </>
   );
 }

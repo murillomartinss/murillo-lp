@@ -77,10 +77,7 @@ export type LandingContent = {
       lineOne: string;
       lineTwo: string;
     };
-    cta: {
-      label: string;
-      href: string;
-    };
+    ctas: { label: string; href: string; icon: string }[];
     socialLinks: { label: string; href: string }[];
   };
   footer: {
@@ -249,10 +246,10 @@ export const landingContent: LandingContent = {
       lineOne: "Tem um projeto?",
       lineTwo: "Me chama.",
     },
-    cta: {
-      label: "Iniciar Contato",
-      href: "mailto:hello@murillo.dev",
-    },
+    ctas: [
+      { label: "WhatsApp", href: "https://wa.me/5551997276111?text=Olá%2C+vim+pelo+seu+portfólio!", icon: "whatsapp" },
+      { label: "E-mail", href: "mailto:murillohgmartins@gmail.com", icon: "email" },
+    ],
     socialLinks: [
       { label: "LinkedIn", href: "https://www.linkedin.com/in/murillo-martins-ti/" },
       { label: "GitHub", href: "https://github.com/murillomartinss" },
