@@ -31,6 +31,12 @@ export type SkillCard = {
 
 export type LandingContent = {
   aliases: Record<string, string>;
+  ui: {
+    emailCopied: string;
+    openMenu: string;
+    closeMenu: string;
+    mobileMenuLabel: string;
+  };
   nav: {
     items: NavItem[];
     brand: string;
@@ -89,6 +95,12 @@ export type LandingContent = {
 export const landingContent: LandingContent = {
   aliases: {
     work: "services",
+  },
+  ui: {
+    emailCopied: "Copiado!",
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
+    mobileMenuLabel: "Menu mobile",
   },
   nav: {
     brand: "Murillo Martins",
@@ -256,7 +268,7 @@ export const landingContent: LandingContent = {
     ],
   },
   footer: {
-    copyright: "Murillo Martins. Todos os direitos reservados.",
+    copyright: "Todos os direitos reservados.",
     links: ["Github", "LinkedIn", "Código-Fonte"],
   },
 };

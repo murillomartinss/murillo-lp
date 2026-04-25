@@ -7,7 +7,7 @@ import {
   type Variants,
 } from "framer-motion";
 import styles from "./App.module.css";
-import { landingContent } from "./config/landingContent";
+import { useLanguage, type Locale } from "./context/LanguageContext";
 import SplashScreen from "./components/SplashScreen";
 import FigmaIcon from "./assets/icons/figma.svg?react";
 import CssIcon from "./assets/icons/css.svg?react";
@@ -31,6 +31,9 @@ import LinkedinIcon from "./assets/icons/linkedin.svg?react";
 import WhatsAppIcon from "./assets/icons/whatsapp.svg?react";
 import EmailIcon from "./assets/icons/email.svg?react";
 import LogoIcon from "./assets/logo.svg?react";
+import BrFlag from "./assets/flags/br.svg?react";
+import UsFlag from "./assets/flags/us.svg?react";
+import EsFlag from "./assets/flags/es.svg?react";
 
 type FrameNavProps = {
   onNavigate: (hash: string) => void;
@@ -103,8 +106,17 @@ const pillIcons: Record<string, React.ReactNode> = {
   "Azure DevOps": <AzureIcon width={14} height={14} />,
   "GitHub": <GithubIcon width={14} height={14} />,
   "Acessibilidade": <AccessibilityIcon width={14} height={14} />,
+  "Accessibility": <AccessibilityIcon width={14} height={14} />,
+  "Accesibilidad": <AccessibilityIcon width={14} height={14} />,
   "Performance": <PerformanceIcon width={14} height={14} />,
+  "Rendimiento": <PerformanceIcon width={14} height={14} />,
 };
+
+const localeOptions: { code: Locale; label: string; Flag: React.ComponentType<React.SVGProps<SVGSVGElement>> }[] = [
+  { code: "pt", label: "PT", Flag: BrFlag },
+  { code: "en", label: "EN", Flag: UsFlag },
+  { code: "es", label: "ES", Flag: EsFlag },
+];
 
 function fadeUp(delay = 0, reduceMotion: boolean | null = false): MotionProps {
   if (reduceMotion) {
@@ -119,7 +131,73 @@ function fadeUp(delay = 0, reduceMotion: boolean | null = false): MotionProps {
   };
 }
 
+function LangSwitcher() {
+  const { locale, setLocale } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  const current = localeOptions.find((o) => o.code === locale)!;
+  const others = localeOptions.filter((o) => o.code !== locale);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  return (
+    <div className={styles.langSwitcher} ref={wrapRef}>
+      <button
+        className={styles.langTrigger}
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        {current.label}
+        <span className={styles.langFlag} aria-hidden="true">
+          <current.Flag width={16} height={16} />
+        </span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className={styles.langDropdown}
+            role="listbox"
+            initial={{ opacity: 0, y: -6, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.96 }}
+            transition={{ duration: 0.14, ease: "easeOut" }}
+          >
+            {others.map(({ code, label, Flag }) => (
+              <button
+                key={code}
+                className={styles.langOption}
+                role="option"
+                onClick={() => {
+                  setLocale(code);
+                  setOpen(false);
+                }}
+              >
+                {label}
+                <span className={styles.langFlag} aria-hidden="true">
+                  <Flag width={16} height={16} />
+                </span>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
+  const { content } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleNavClick = (href: string) => {
@@ -128,7 +206,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
   };
 
   const isActive = (href: string) =>
-    (landingContent.aliases[href.slice(1)] ?? href.slice(1)) === activeSection;
+    (content.aliases[href.slice(1)] ?? href.slice(1)) === activeSection;
 
   return (
     <header className={styles.navWrap}>
@@ -144,7 +222,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
           <LogoIcon width={36} height={36} className={styles.logoIcon} aria-label="Murillo Martins" />
         </a>
         <nav className={styles.navLinks} aria-label="Primary">
-          {landingContent.nav.items.map((item) => (
+          {content.nav.items.map((item) => (
             <a
               key={item.label}
               className={isActive(item.href) ? styles.navLinkActive : styles.navLink}
@@ -161,7 +239,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
         <button
           className={[styles.hamburger, menuOpen ? styles.hamburgerOpen : ""].filter(Boolean).join(" ")}
           onClick={() => setMenuOpen((o) => !o)}
-          aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-label={menuOpen ? content.ui.closeMenu : content.ui.openMenu}
           aria-expanded={menuOpen}
         >
           <span aria-hidden="true" />
@@ -173,13 +251,13 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
         {menuOpen && (
           <motion.nav
             className={styles.navMobileMenu}
-            aria-label="Menu mobile"
+            aria-label={content.ui.mobileMenuLabel}
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
           >
-            {landingContent.nav.items.map((item) => (
+            {content.nav.items.map((item) => (
               <a
                 key={item.label}
                 className={isActive(item.href) ? styles.navMobileLinkActive : styles.navMobileLink}
@@ -201,6 +279,7 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
 
 export default function App() {
   const reduceMotion = useReducedMotion();
+  const { content } = useLanguage();
   const [splashDone, setSplashDone] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [emailCopied, setEmailCopied] = useState(false);
@@ -208,7 +287,7 @@ export default function App() {
 
   const scrollToHash = (hash: string, behavior: ScrollBehavior = reduceMotion ? "auto" : "smooth") => {
     const normalizedHash = hash.startsWith("#") ? hash.slice(1) : hash;
-    const targetId = landingContent.aliases[normalizedHash] ?? normalizedHash;
+    const targetId = content.aliases[normalizedHash] ?? normalizedHash;
     const target = document.getElementById(targetId);
     const viewport = scrollViewportRef.current;
 
@@ -300,6 +379,9 @@ export default function App() {
           animate={reduceMotion ? undefined : { scale: [1, 0.92, 1.06, 1], opacity: [0.7, 0.92, 0.78, 0.7] }}
           transition={reduceMotion ? undefined : { duration: 16, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
+        <div className={styles.langFixed}>
+          <LangSwitcher />
+        </div>
         <FrameNav onNavigate={scrollToHash} activeSection={activeSection} />
 
         <main className={styles.canvas}>
@@ -312,27 +394,27 @@ export default function App() {
                 variants={sectionStagger}
               >
                 <motion.h1 className={styles.heroTitle} variants={cardReveal}>
-                  {landingContent.hero.title.lineOne}
+                  {content.hero.title.lineOne}
                   <br />
-                  {landingContent.hero.title.lineTwo}
+                  {content.hero.title.lineTwo}
                   <br />
-                  <span>{landingContent.hero.title.highlight}</span>
+                  <span>{content.hero.title.highlight}</span>
                 </motion.h1>
                 <motion.p className={styles.heroText} variants={cardReveal}>
-                  {landingContent.hero.description}
+                  {content.hero.description}
                 </motion.p>
                 <motion.a
                   className={styles.primaryCta}
-                  href={landingContent.hero.cta.href}
+                  href={content.hero.cta.href}
                   onClick={(event) => {
                     event.preventDefault();
-                    scrollToHash(landingContent.hero.cta.href);
+                    scrollToHash(content.hero.cta.href);
                   }}
                   variants={cardReveal}
                   whileHover={reduceMotion ? undefined : { backgroundColor: "#1a6fe0", boxShadow: "0 0 60px rgba(29, 111, 216, 0.4)" }}
                   whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 >
-                  {landingContent.hero.cta.label}
+                  {content.hero.cta.label}
                   <span aria-hidden="true">+</span>
                 </motion.a>
               </motion.div>
@@ -343,7 +425,7 @@ export default function App() {
                   animate={reduceMotion ? undefined : { y: [0, 16, 0], opacity: [0.35, 0.75, 0.35] }}
                   transition={reduceMotion ? undefined : { duration: 2.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                 >
-                  <span>{landingContent.hero.scrollHint}</span>
+                  <span>{content.hero.scrollHint}</span>
                   <div />
                 </motion.div>
               </div>
@@ -360,7 +442,7 @@ export default function App() {
                 viewport={{ once: true }}
               transition={{ duration: 0.9, ease: [0.2, 0.9, 0.2, 1] }}
             >
-                {landingContent.services.eyebrow}
+                {content.services.eyebrow}
               </motion.h2>
               <motion.div
                 className={styles.sectionLine}
@@ -376,9 +458,9 @@ export default function App() {
               viewport={{ once: true, amount: 0.15 }}
               variants={sectionStagger}
             >
-              {landingContent.services.cards.map((card) => (
+              {content.services.cards.map((card) => (
                 <motion.article
-                  key={card.title}
+                  key={card.icon}
                   className={card.wide ? styles.serviceCardWide : styles.serviceCard}
                   variants={cardReveal}
                   whileHover={
@@ -418,11 +500,11 @@ export default function App() {
             />
             <motion.header className={styles.experienceHeader} {...fadeUp(0.08, reduceMotion)}>
               <h2>
-                {landingContent.experience.title.lineOne}
+                {content.experience.title.lineOne}
                 <br />
-                <span>{landingContent.experience.title.highlight}</span> {landingContent.experience.title.lineTwo}
+                <span>{content.experience.title.highlight}</span> {content.experience.title.lineTwo}
               </h2>
-              <p>{landingContent.experience.description}</p>
+              <p>{content.experience.description}</p>
             </motion.header>
 
             <div className={styles.timeline}>
@@ -436,7 +518,7 @@ export default function App() {
                 viewport={{ once: true, amount: 0.15 }}
                 variants={sectionStagger}
               >
-                {landingContent.experience.items.map((item) => (
+                {content.experience.items.map((item) => (
                   <motion.article
                     key={item.period}
                     className={styles.timelineCard}
@@ -506,11 +588,11 @@ export default function App() {
             <div className={styles.skillsLayout}>
               <motion.header className={styles.skillsIntro} {...fadeUp(0.08, reduceMotion)}>
                 <h2>
-                  {landingContent.skills.title.lineOne}
+                  {content.skills.title.lineOne}
                   <br />
-                  <span>{landingContent.skills.title.highlight}</span>
+                  <span>{content.skills.title.highlight}</span>
                 </h2>
-                <p>{landingContent.skills.description}</p>
+                <p>{content.skills.description}</p>
               </motion.header>
 
               <motion.div
@@ -527,7 +609,7 @@ export default function App() {
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, ease: [0.2, 0.9, 0.2, 1] }}
                 />
-                {landingContent.skills.cards.map((card, index) => {
+                {content.skills.cards.map((card, index) => {
                   const classes = [
                     styles.skillCard,
                     card.offset === "low" ? styles.skillOffsetLow : "",
@@ -568,7 +650,7 @@ export default function App() {
 
                 <motion.div className={styles.skillPills} variants={cardReveal}>
                   <div className={styles.skillPillsTrack}>
-                    {[...landingContent.skills.pills, ...landingContent.skills.pills].map((pill, i) => (
+                    {[...content.skills.pills, ...content.skills.pills].map((pill, i) => (
                       <div key={i} className={styles.skillPill}>
                         {pillIcons[pill] && <span className={styles.skillPillIcon}>{pillIcons[pill]}</span>}
                         {pill}
@@ -586,15 +668,15 @@ export default function App() {
           >
             <div className={styles.contactFade} aria-hidden="true" />
             <motion.div className={styles.contactInner} {...fadeUp(0.08, reduceMotion)}>
-              <p className={styles.contactEyebrow}>{landingContent.contact.eyebrow}</p>
+              <p className={styles.contactEyebrow}>{content.contact.eyebrow}</p>
               <h2>
-                {landingContent.contact.title.lineOne}
+                {content.contact.title.lineOne}
                 <br />
-                {landingContent.contact.title.lineTwo}
+                {content.contact.title.lineTwo}
               </h2>
               <div className={styles.contactActions}>
                 <div className={styles.contactButtons}>
-                  {landingContent.contact.ctas.map((cta, i) => {
+                  {content.contact.ctas.map((cta, i) => {
                     const isEmail = cta.href.startsWith("mailto:");
                     const email = isEmail ? cta.href.replace("mailto:", "") : null;
                     return (
@@ -617,13 +699,13 @@ export default function App() {
                         whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                       >
                         <span className={styles.ctaIcon} aria-hidden="true">{ctaIcons[cta.icon]}</span>
-                        {isEmail ? (emailCopied ? "Copiado!" : cta.label) : cta.label}
+                        {isEmail ? (emailCopied ? content.ui.emailCopied : cta.label) : cta.label}
                       </motion.a>
                     );
                   })}
                 </div>
                 <div className={styles.contactLinks}>
-                  {landingContent.contact.socialLinks.map(({ label, href }) => (
+                  {content.contact.socialLinks.map(({ label, href }) => (
                     <motion.a
                       key={label}
                       href={href}
@@ -645,7 +727,7 @@ export default function App() {
         <footer className={styles.footer}>
           <span>
             © {new Date().getFullYear()} Murillo Martins.
-            <span className={styles.footerBreak}> Todos os direitos reservados.</span>
+            <span className={styles.footerBreak}> {content.footer.copyright}</span>
           </span>
         </footer>
       </div>
