@@ -197,7 +197,7 @@ function LangSwitcher() {
 }
 
 function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
-  const { content } = useLanguage();
+  const { content, locale, setLocale } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleNavClick = (href: string) => {
@@ -236,6 +236,9 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
             </a>
           ))}
         </nav>
+        <div className={styles.navLangDesktop}>
+          <LangSwitcher />
+        </div>
         <button
           className={[styles.hamburger, menuOpen ? styles.hamburgerOpen : ""].filter(Boolean).join(" ")}
           onClick={() => setMenuOpen((o) => !o)}
@@ -270,6 +273,20 @@ function FrameNav({ onNavigate, activeSection }: FrameNavProps) {
                 {item.label}
               </a>
             ))}
+            <div className={styles.navMobileLang}>
+              {localeOptions.map(({ code, label, Flag }) => (
+                <button
+                  key={code}
+                  className={[styles.navMobileLangBtn, locale === code ? styles.navMobileLangBtnActive : ""].filter(Boolean).join(" ")}
+                  onClick={() => setLocale(code)}
+                >
+                  <span className={styles.langFlag} aria-hidden="true">
+                    <Flag width={16} height={16} />
+                  </span>
+                  {label}
+                </button>
+              ))}
+            </div>
           </motion.nav>
         )}
       </AnimatePresence>
@@ -379,9 +396,6 @@ export default function App() {
           animate={reduceMotion ? undefined : { scale: [1, 0.92, 1.06, 1], opacity: [0.7, 0.92, 0.78, 0.7] }}
           transition={reduceMotion ? undefined : { duration: 16, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
-        <div className={styles.langFixed}>
-          <LangSwitcher />
-        </div>
         <FrameNav onNavigate={scrollToHash} activeSection={activeSection} />
 
         <main className={styles.canvas}>
