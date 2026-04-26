@@ -1055,6 +1055,13 @@
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 0.25rem;
+  transition: border-color 240ms ease, color 240ms ease;
+}
+
+.contactLinks a:hover {
+  border-bottom-color: var(--accent);
 }
 
 .socialIcon {
@@ -1063,16 +1070,6 @@
   flex-shrink: 0;
 }
 
-.contactUnderline {
-  width: 0;
-  height: 1px;
-  background: var(--accent);
-  transition: width 240ms ease;
-}
-
-.contactLinks a:hover .contactUnderline {
-  width: 1rem;
-}
 
 .footer {
   display: flex;

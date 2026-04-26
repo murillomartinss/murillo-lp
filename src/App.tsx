@@ -3,7 +3,6 @@ import {
   AnimatePresence,
   motion,
   useReducedMotion,
-  type MotionProps,
   type Variants,
 } from "framer-motion";
 import styles from "./App.module.css";
@@ -118,18 +117,6 @@ const localeOptions: { code: Locale; label: string; Flag: React.ComponentType<Re
   { code: "es", label: "ES", Flag: EsFlag },
 ];
 
-function fadeUp(delay = 0, reduceMotion: boolean | null = false): MotionProps {
-  if (reduceMotion) {
-    return {};
-  }
-
-  return {
-    initial: { opacity: 0, y: 48, scale: 0.96, filter: "blur(10px)" },
-    whileInView: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" },
-    viewport: { once: true, amount: 0.2 },
-    transition: { duration: 0.9, ease: [0.2, 0.9, 0.2, 1], delay },
-  };
-}
 
 function LangSwitcher() {
   const { locale, setLocale } = useLanguage();
@@ -450,33 +437,15 @@ export default function App() {
             id="services"
             className={styles.servicesSection}
           >
-            <motion.div className={styles.sectionHeader} {...fadeUp(0.06, reduceMotion)}>
-              <motion.h2
-                whileInView={reduceMotion ? undefined : { x: [0, -14, 0], opacity: [0.2, 1] }}
-                viewport={{ once: true }}
-              transition={{ duration: 0.9, ease: [0.2, 0.9, 0.2, 1] }}
-            >
-                {content.services.eyebrow}
-              </motion.h2>
-              <motion.div
-                className={styles.sectionLine}
-                whileInView={reduceMotion ? undefined : { scaleX: [0.2, 1.2, 1] }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.95, ease: [0.2, 0.9, 0.2, 1] }}
-              />
-            </motion.div>
-            <motion.div
-              className={styles.servicesGrid}
-              initial={reduceMotion ? undefined : "hidden"}
-              whileInView={reduceMotion ? undefined : "show"}
-              viewport={{ once: true, amount: 0.15 }}
-              variants={sectionStagger}
-            >
+            <div className={styles.sectionHeader}>
+              <h2>{content.services.eyebrow}</h2>
+              <div className={styles.sectionLine} />
+            </div>
+            <div className={styles.servicesGrid}>
               {content.services.cards.map((card) => (
                 <motion.article
                   key={card.icon}
                   className={card.wide ? styles.serviceCardWide : styles.serviceCard}
-                  variants={cardReveal}
                   whileHover={
                     reduceMotion
                       ? undefined
@@ -484,6 +453,7 @@ export default function App() {
                   }
                   transition={{ duration: 0.35 }}
                 >
+
                   {card.wide ? (
                     <motion.div
                       className={styles.serviceImage}
@@ -499,7 +469,7 @@ export default function App() {
                   <p>{card.description}</p>
                 </motion.article>
               ))}
-            </motion.div>
+            </div>
           </section>
 
           <section
@@ -512,31 +482,24 @@ export default function App() {
               animate={reduceMotion ? undefined : { x: [0, 40, -10, 0], scale: [1, 1.05, 0.98, 1] }}
               transition={reduceMotion ? undefined : { duration: 18, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
             />
-            <motion.header className={styles.experienceHeader} {...fadeUp(0.08, reduceMotion)}>
+            <header className={styles.experienceHeader}>
               <h2>
                 {content.experience.title.lineOne}
                 <br />
                 <span>{content.experience.title.highlight}</span> {content.experience.title.lineTwo}
               </h2>
               <p>{content.experience.description}</p>
-            </motion.header>
+            </header>
 
             <div className={styles.timeline}>
               <div className={styles.timelineLine} aria-hidden="true">
                 <div className={styles.timelineLineProgress} />
               </div>
-              <motion.div
-                className={styles.timelineItems}
-                initial={reduceMotion ? undefined : "hidden"}
-                whileInView={reduceMotion ? undefined : "show"}
-                viewport={{ once: true, amount: 0.15 }}
-                variants={sectionStagger}
-              >
+              <div className={styles.timelineItems}>
                 {content.experience.items.map((item) => (
                   <motion.article
                     key={item.period}
                     className={styles.timelineCard}
-                    variants={cardReveal}
                     whileHover={
                       reduceMotion
                         ? undefined
@@ -585,7 +548,7 @@ export default function App() {
                     </div>
                   </motion.article>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </section>
 
@@ -600,29 +563,17 @@ export default function App() {
               transition={reduceMotion ? undefined : { duration: 15, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
             />
             <div className={styles.skillsLayout}>
-              <motion.header className={styles.skillsIntro} {...fadeUp(0.08, reduceMotion)}>
+              <header className={styles.skillsIntro}>
                 <h2>
                   {content.skills.title.lineOne}
                   <br />
                   <span>{content.skills.title.highlight}</span>
                 </h2>
                 <p>{content.skills.description}</p>
-              </motion.header>
+              </header>
 
-              <motion.div
-                className={styles.skillsGrid}
-                initial={reduceMotion ? undefined : "hidden"}
-                whileInView={reduceMotion ? undefined : "show"}
-                viewport={{ once: true, amount: 0.15 }}
-                variants={sectionStagger}
-              >
-                <motion.div
-                  className={styles.skillsGhostLine}
-                  aria-hidden="true"
-                  whileInView={reduceMotion ? undefined : { scaleY: [0.2, 1] }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: [0.2, 0.9, 0.2, 1] }}
-                />
+              <div className={styles.skillsGrid}>
+                <div className={styles.skillsGhostLine} aria-hidden="true" />
                 {content.skills.cards.map((card, index) => {
                   const classes = [
                     styles.skillCard,
@@ -638,7 +589,6 @@ export default function App() {
                     <motion.article
                       key={card.title}
                       className={classes}
-                      variants={cardReveal}
                       whileHover={
                         reduceMotion
                           ? undefined
@@ -662,7 +612,7 @@ export default function App() {
                   );
                 })}
 
-                <motion.div className={styles.skillPills} variants={cardReveal}>
+                <div className={styles.skillPills}>
                   <div className={styles.skillPillsTrack}>
                     {[...content.skills.pills, ...content.skills.pills].map((pill, i) => (
                       <div key={i} className={styles.skillPill}>
@@ -671,8 +621,8 @@ export default function App() {
                       </div>
                     ))}
                   </div>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -681,7 +631,7 @@ export default function App() {
             className={styles.contactSection}
           >
             <div className={styles.contactFade} aria-hidden="true" />
-            <motion.div className={styles.contactInner} {...fadeUp(0.08, reduceMotion)}>
+            <div className={styles.contactInner}>
               <p className={styles.contactEyebrow}>{content.contact.eyebrow}</p>
               <h2>
                 {content.contact.title.lineOne}
@@ -729,12 +679,11 @@ export default function App() {
                     >
                       {socialIcons[label] && <span className={styles.socialIcon} aria-hidden="true">{socialIcons[label]}</span>}
                       {label}
-                      <span className={styles.contactUnderline} aria-hidden="true" />
                     </motion.a>
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           </section>
         </main>
 
